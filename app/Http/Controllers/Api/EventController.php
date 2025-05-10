@@ -59,6 +59,6 @@ class EventController extends Controller
     public function reset()
     {
         $this->accountService->reset();
-        return response('', Response::HTTP_OK);
+        return response('OK', Response::HTTP_OK);
     }
 }

@@ -6,21 +6,21 @@ class TransactionService
 {
     public function __construct(private AccountService $accountService) {}
 
-    public function deposit(string $accountId, int $amount): array
+    public function deposit(string $destination, int $amount): array
     {
-        $balance = $this->accountService->get($accountId) ?? 0;
+        $balance = $this->accountService->get($destination) ?? 0;
         $newBalance = $balance + $amount;
-        $this->accountService->set($accountId, $newBalance);
+        $this->accountService->set($destination, $newBalance);
 
         return [
             'destination' => [
-                'id' => $accountId,
+                'id' => $destination,
                 'balance' => $newBalance
             ]
         ];
     }
 
-    public function withdraw(string $accountId, int $amount): array|int
+    public function withdraw(string $origin, int $amount): array|int
     {
         $balance = $this->accountService->get($origin);
         if ($balance === null) return 0;
@@ -36,15 +36,15 @@ class TransactionService
         ];
     }
 
-    public function transfer(string $origin, string $accountId, int $amount): array|int
+    public function transfer(string $origin, string $destination, int $amount): array|int
     {
         $originBalance = $this->accountService->get($origin);
         if ($originBalance === null) return 0;
 
-        $accountIdBalance = $this->accountService->get($accountId) ?? 0;
+        $destinationBalance = $this->accountService->get($destination) ?? 0;
 
         $this->accountService->set($origin, $originBalance - $amount);
-        $this->accountService->set($accountId, $accountIdBalance + $amount);
+        $this->accountService->set($destination, $destinationBalance + $amount);
 
         return [
             'origin' => [
@@ -52,8 +52,8 @@ class TransactionService
                 'balance' => $originBalance - $amount
             ],
             'destination' => [
-                'id' => $accountId,
-                'balance' => $accountIdBalance + $amount
+                'id' => $destination,
+                'balance' => $destinationBalance + $amount
             ]
         ];
     }
